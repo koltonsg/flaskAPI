@@ -1,31 +1,33 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import ast
 from recommender import get_genre_recommendations_for_user, recommend, load_data
-from flask_cors import CORS
-
 
 # --- Load Data ---
 df_users, df_triple, df_titles_genres, X, item_mapper, item_inv_mapper = load_data()
 
-# --- Flask App ---
+# --- Initialize Flask App ---
 app = Flask(__name__)
-CORS(app, origins=[
-    "http://localhost:3000",              
-    "https://victorious-ocean-0d29f0010.6.azurestaticapps.net/"    
-])
 
+# --- Configure CORS (Make sure app is defined before this) ---
+CORS(app, origins=[
+    "http://localhost:3000",
+    "https://victorious-ocean-0d29f0010.6.azurestaticapps.net"
+], supports_credentials=True)
+
+# --- Routes ---
 @app.route('/recommendations', methods=['POST', 'OPTIONS'])
 def recommend_for_new_user():
     if request.method == 'OPTIONS':
-        return '', 200 
-     
+        return '', 200  # Allow preflight
+
     try:
         data = request.get_json()
 
         age = data['age']
         gender = data['gender']
-        platforms = data.get('platforms', {})  # optional
+        platforms = data.get('platforms', [])
         genres = data.get('genres', ['Action', 'Romance', 'Comedy', 'Thrillers', 'Documentaries'])
 
         recs = get_genre_recommendations_for_user(
@@ -46,4 +48,6 @@ def recommend_for_new_user():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
+# --- Only include this for local testing ---
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
