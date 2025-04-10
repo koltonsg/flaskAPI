@@ -10,8 +10,10 @@ df_users, df_triple, df_titles_genres, X, item_mapper, item_inv_mapper = load_da
 
 # --- Flask App ---
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
-
+CORS(app, origins=[
+    "http://localhost:3000",              
+    "https://victorious-ocean-0d29f0010.6.azurestaticapps.net/"    
+])
 
 @app.route('/recommendations', methods=['POST', 'OPTIONS'])
 def recommend_for_new_user():
@@ -44,6 +46,4 @@ def recommend_for_new_user():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5050)
 
