@@ -15,7 +15,7 @@ def load_data():
     df_titles_genres['genres'] = df_titles_genres['genres'].apply(ast.literal_eval)
     df_titles_genres.set_index('show_id', inplace=True)
 
-    # Build interaction matrix X (user-item matrix)
+    # Build interaction user-item matrix
     user_enc = LabelEncoder()
     item_enc = LabelEncoder()
 
@@ -59,7 +59,7 @@ def get_genre_recommendations_for_user(
         (df_users['gender'] == gender) &
         (df_users['age'].between(age - age_range, age + age_range))
     ]
-    print(f"🧠 After age/gender filter: {len(matching_users)} users")
+    print(f"After age/gender filter: {len(matching_users)} users")
 
     # Step 2: Smart platform filtering
     min_users_after_filter = 3
@@ -69,14 +69,14 @@ def get_genre_recommendations_for_user(
         before = len(matching_users)
         temp_filtered = matching_users[matching_users[platform] == value]
         after = len(temp_filtered)
-        print(f"🔌 Trying platform {platform}={value}: {before} → {after}")
+        print(f"Trying platform {platform}={value}: {before} → {after}")
 
         if after >= min_users_after_filter:
             matching_users = temp_filtered
-            print(f"✅ Keeping filter {platform}={value}")
+            print(f"Keeping filter {platform}={value}")
         else:
             skipped_platforms.append(platform)
-            print(f"⚠️ Skipping filter {platform} — too few users remain.")
+            print(f"Skipping filter {platform} — too few users remain.")
 
     if matching_users.empty:
         print("❌ No matching users found after filters.")
@@ -98,7 +98,7 @@ def get_genre_recommendations_for_user(
             df_similar_ratings['show_id'].isin(genre_movies.index)
         ]
 
-        print(f"📊 {genre} → {len(genre_movies)} movies, {len(genre_ratings)} ratings by similar users")
+        print(f"{genre} → {len(genre_movies)} movies, {len(genre_ratings)} ratings by similar users")
 
         if genre_ratings.empty:
             continue

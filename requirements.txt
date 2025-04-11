@@ -5,3 +5,4 @@ pandas
 numpy
 scipy
 scikit-learn
+# these help flask know what packages are involved in the app
